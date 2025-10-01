@@ -5,10 +5,12 @@
 
       <form @submit.prevent="handleRegister" class="form">
         <div class="form-group">
-          <label for="name" class="form-label">Ad *</label>
+          <label for="register-name" class="form-label">Ad *</label>
           <InputText
-            id="name"
+            id="register-name"
+            name="name"
             v-model="form.name"
+            autocomplete="given-name"
             placeholder="Adınızı girin"
             :class="{ 'p-invalid': errors.name }"
             class="form-input"
@@ -17,10 +19,12 @@
         </div>
 
         <div class="form-group">
-          <label for="surname" class="form-label">Soyad *</label>
+          <label for="register-surname" class="form-label">Soyad *</label>
           <InputText
-            id="surname"
+            id="register-surname"
+            name="surname"
             v-model="form.surname"
+            autocomplete="family-name"
             placeholder="Soyadınızı girin"
             :class="{ 'p-invalid': errors.surname }"
             class="form-input"
@@ -29,11 +33,13 @@
         </div>
 
         <div class="form-group">
-          <label for="email" class="form-label">E-Posta *</label>
+          <label for="register-email" class="form-label">E-Posta *</label>
           <InputText
-            id="email"
+            id="register-email"
+            name="email"
             v-model="form.email"
             type="email"
+            autocomplete="email"
             placeholder="ornek@email.com"
             :class="{ 'p-invalid': errors.email }"
             class="form-input"
@@ -42,10 +48,12 @@
         </div>
 
         <div class="form-group">
-          <label for="password" class="form-label">Şifre *</label>
+          <label for="register-password" class="form-label">Şifre *</label>
           <Password
-            id="password"
+            input-id="register-password"
+            name="password"
             v-model="form.password"
+            autocomplete="new-password"
             placeholder="Şifrenizi girin"
             :class="{ 'p-invalid': errors.password }"
             class="form-input"
@@ -56,10 +64,12 @@
         </div>
 
         <div class="form-group">
-          <label for="passwordConfirm" class="form-label">Şifre Doğrulama *</label>
+          <label for="register-password-confirm" class="form-label">Şifre Doğrulama *</label>
           <Password
-            id="passwordConfirm"
+            input-id="register-password-confirm"
+            name="passwordConfirm"
             v-model="form.passwordConfirm"
+            autocomplete="new-password"
             placeholder="Şifrenizi tekrar girin"
             :class="{ 'p-invalid': errors.passwordConfirm }"
             class="form-input"
@@ -74,12 +84,12 @@
         <div class="form-group form-group--checkbox">
           <div class="checkbox-container">
             <Checkbox
-              id="terms"
+              input-id="register-terms"
               v-model="form.acceptTerms"
               binary
               :class="{ 'p-invalid': errors.acceptTerms }"
             />
-            <label for="terms" class="form-label form-label--checkbox">
+            <label for="register-terms" class="form-label form-label--checkbox">
               İzimza Kullanım Şartları'nı kabul ediyorum. Aydınlatma Metni'ni okudum ve anladım. *
             </label>
           </div>
@@ -105,18 +115,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
+import { useToast } from 'primevue/usetoast'
 import { useAuthStore } from '@/stores/auth'
 import type { RegisterData } from '@/types/auth'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const toast = useToast()
 
 const form = ref<RegisterData>({
   name: '',
@@ -129,6 +141,15 @@ const form = ref<RegisterData>({
 
 const errors = ref<Record<string, string>>({})
 const isLoading = ref(false)
+
+// Clear errors when form changes
+watch(
+  form,
+  () => {
+    errors.value = {}
+  },
+  { deep: true },
+)
 
 const isFormValid = computed(() => {
   return (
@@ -187,12 +208,30 @@ const handleRegister = async () => {
     const success = await authStore.register(form.value)
 
     if (success) {
-      router.push({ name: 'Dashboard' })
+      toast.add({
+        severity: 'success',
+        summary: 'Başarılı',
+        detail: 'Kayıt başarılı! Hoş geldiniz...',
+        life: 2000,
+      })
+      setTimeout(() => {
+        router.push({ name: 'Dashboard' })
+      }, 500)
     } else {
-      errors.value.general = 'Bu e-posta adresi zaten kullanılıyor'
+      toast.add({
+        severity: 'error',
+        summary: 'Hata',
+        detail: 'Bu e-posta adresi zaten kullanılıyor',
+        life: 3000,
+      })
     }
   } catch {
-    errors.value.general = 'Kayıt olurken bir hata oluştu'
+    toast.add({
+      severity: 'error',
+      summary: 'Hata',
+      detail: 'Kayıt olurken bir hata oluştu',
+      life: 3000,
+    })
   } finally {
     isLoading.value = false
   }

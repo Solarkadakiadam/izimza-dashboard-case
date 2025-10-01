@@ -58,12 +58,21 @@
             </div>
             <div class="stat-info">
               <h3 class="stat-title">Arşiv Alanı</h3>
-              <p class="stat-value">{{ stats.archiveSpace }}</p>
+              <p class="stat-value">
+                {{ stats.archiveSpaceUsed }} / {{ stats.archiveSpaceTotal }} MB
+              </p>
+              <ProgressBar
+                :value="stats.archiveSpacePercentage"
+                :showValue="false"
+                style="height: 6px; margin-top: 0.5rem"
+              />
             </div>
           </div>
         </template>
       </Card>
     </div>
+
+    <Divider />
 
     <div class="dashboard-section">
       <h2 class="section-title">Hemen İmzala</h2>
@@ -98,6 +107,8 @@
       </Card>
     </div>
 
+    <Divider />
+
     <div class="dashboard-section">
       <div class="section-header">
         <h2 class="section-title">Son Arşivlenen Belgeler</h2>
@@ -125,6 +136,11 @@
                 <div class="file-info">
                   <i :class="getFileIcon(data.type)" class="file-icon"></i>
                   <span class="file-name">{{ data.name }}</span>
+                  <Badge
+                    :value="data.type.toUpperCase()"
+                    :severity="getBadgeSeverity(data.type)"
+                    style="margin-left: 0.5rem"
+                  />
                 </div>
               </template>
             </Column>
@@ -169,6 +185,9 @@ import Button from 'primevue/button'
 import FileUpload from 'primevue/fileupload'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
+import ProgressBar from 'primevue/progressbar'
+import Badge from 'primevue/badge'
+import Divider from 'primevue/divider'
 import { useAuthStore } from '@/stores/auth'
 import type { Document } from '@/types/auth'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
@@ -179,7 +198,9 @@ const stats = ref({
   totalSignatures: 127,
   archivedDocuments: 45,
   remainingCredits: 23,
-  archiveSpace: '156.8 Mb / 1024 Mb',
+  archiveSpaceUsed: 156.8,
+  archiveSpaceTotal: 1024,
+  archiveSpacePercentage: 15,
 })
 
 const recentDocuments = ref<Document[]>([
@@ -249,6 +270,17 @@ const viewDocument = (document: Document) => {
 
 const downloadDocument = (document: Document) => {
   console.log('Download document:', document)
+}
+
+const getBadgeSeverity = (type: string) => {
+  switch (type) {
+    case 'pdf':
+      return 'danger'
+    case 'docx':
+      return 'info'
+    default:
+      return 'secondary'
+  }
 }
 </script>
 

@@ -5,11 +5,13 @@
 
       <form @submit.prevent="handleLogin" class="form">
         <div class="form-group">
-          <label for="email" class="form-label">E-Posta</label>
+          <label for="login-email" class="form-label">E-Posta</label>
           <InputText
-            id="email"
+            id="login-email"
+            name="email"
             v-model="form.email"
             type="email"
+            autocomplete="email"
             placeholder="ornek@email.com"
             :class="{ 'p-invalid': errors.email }"
             class="form-input"
@@ -18,10 +20,12 @@
         </div>
 
         <div class="form-group">
-          <label for="password" class="form-label">Şifre</label>
+          <label for="login-password" class="form-label">Şifre</label>
           <Password
-            id="password"
+            input-id="login-password"
+            name="password"
             v-model="form.password"
+            autocomplete="current-password"
             placeholder="Şifrenizi girin"
             :class="{ 'p-invalid': errors.password }"
             class="form-input"
@@ -33,8 +37,10 @@
 
         <div class="form-group form-group--checkbox">
           <div class="checkbox-container">
-            <Checkbox id="remember" v-model="form.rememberMe" binary />
-            <label for="remember" class="form-label form-label--checkbox"> Beni Hatırla </label>
+            <Checkbox input-id="login-remember" v-model="form.rememberMe" binary />
+            <label for="login-remember" class="form-label form-label--checkbox">
+              Beni Hatırla
+            </label>
           </div>
         </div>
 
@@ -90,12 +96,14 @@ import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
+import { useToast } from 'primevue/usetoast'
 import { useAuthStore } from '@/stores/auth'
 import type { LoginCredentials } from '@/types/auth'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const toast = useToast()
 
 const form = ref<LoginCredentials>({
   email: '',
@@ -137,12 +145,30 @@ const handleLogin = async () => {
     const success = await authStore.login(form.value)
 
     if (success) {
-      router.push({ name: 'Dashboard' })
+      toast.add({
+        severity: 'success',
+        summary: 'Başarılı',
+        detail: 'Giriş başarılı! Yönlendiriliyorsunuz...',
+        life: 2000,
+      })
+      setTimeout(() => {
+        router.push({ name: 'Dashboard' })
+      }, 500)
     } else {
-      errors.value.general = 'E-posta veya şifre hatalı'
+      toast.add({
+        severity: 'error',
+        summary: 'Hata',
+        detail: 'E-posta veya şifre hatalı',
+        life: 3000,
+      })
     }
   } catch {
-    errors.value.general = 'Giriş yapılırken bir hata oluştu'
+    toast.add({
+      severity: 'error',
+      summary: 'Hata',
+      detail: 'Giriş yapılırken bir hata oluştu',
+      life: 3000,
+    })
   } finally {
     isLoading.value = false
   }

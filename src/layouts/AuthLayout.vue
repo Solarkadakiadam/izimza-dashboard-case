@@ -233,57 +233,20 @@ const toggleLanguage = () => {
 /* Responsive */
 @media (max-width: 768px) {
   .auth-layout {
-    flex-direction: column;
+    background: white;
   }
 
   .auth-layout__left {
-    flex: none;
-    min-height: 30vh;
-    padding: 1rem;
-  }
-
-  .auth-layout__right {
-    flex: 1;
-    padding: 1rem;
-  }
-
-  .logo {
-    font-size: 1.75rem;
-  }
-
-  .slogan-main {
-    font-size: 1.5rem;
-  }
-
-  .slogan-sub {
-    font-size: 1rem;
-  }
-
-  .auth-layout__illustration {
     display: none;
   }
-}
-
-@media (max-width: 480px) {
-  .auth-layout__left {
-    min-height: 25vh;
-    padding: 0.75rem;
-  }
 
   .auth-layout__right {
-    padding: 0.75rem;
+    padding: 1.5rem;
   }
 
-  .logo {
-    font-size: 1.5rem;
-  }
-
-  .slogan-main {
-    font-size: 1.25rem;
-  }
-
-  .slogan-sub {
-    font-size: 0.9rem;
+  .auth-layout__language {
+    top: 1rem;
+    right: 1rem;
   }
 }
 </style>
