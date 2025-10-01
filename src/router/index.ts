@@ -8,22 +8,37 @@ const routes: RouteRecordRaw[] = [
     redirect: '/dashboard',
   },
   {
-    path: '/login',
-    name: 'Login',
-    component: () => import('@/views/LoginView.vue'),
+    path: '/auth',
+    component: () => import('@/layouts/AuthLayout.vue'),
     meta: { requiresGuest: true },
-  },
-  {
-    path: '/register',
-    name: 'Register',
-    component: () => import('@/views/RegisterView.vue'),
-    meta: { requiresGuest: true },
+    children: [
+      {
+        path: 'login',
+        name: 'Login',
+        component: () => import('@/views/LoginView.vue'),
+      },
+      {
+        path: 'register',
+        name: 'Register',
+        component: () => import('@/views/RegisterView.vue'),
+      },
+      {
+        path: '',
+        redirect: '/auth/login',
+      },
+    ],
   },
   {
     path: '/dashboard',
-    name: 'Dashboard',
-    component: () => import('@/views/DashboardView.vue'),
+    component: () => import('@/layouts/DashboardLayout.vue'),
     meta: { requiresAuth: true },
+    children: [
+      {
+        path: '',
+        name: 'Dashboard',
+        component: () => import('@/views/DashboardView.vue'),
+      },
+    ],
   },
   {
     path: '/:pathMatch(.*)*',

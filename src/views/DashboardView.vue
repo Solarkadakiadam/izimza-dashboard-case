@@ -1,7 +1,5 @@
 <template>
-  <DashboardLayout>
-    <template #title>Ana Sayfa</template>
-
+  <div>
     <div class="dashboard-welcome">
       <h1 class="welcome-title">Merhaba, {{ authStore.currentUser?.name }}</h1>
       <p class="welcome-subtitle">Bugün hangi belgelerinizi imzalamak istiyorsunuz?</p>
@@ -175,7 +173,7 @@
         </template>
       </Card>
     </div>
-  </DashboardLayout>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -190,7 +188,6 @@ import Badge from 'primevue/badge'
 import Divider from 'primevue/divider'
 import { useAuthStore } from '@/stores/auth'
 import type { Document } from '@/types/auth'
-import DashboardLayout from '@/layouts/DashboardLayout.vue'
 
 const authStore = useAuthStore()
 

@@ -109,7 +109,7 @@
       </header>
 
       <main class="dashboard-layout__content">
-        <slot />
+        <router-view />
       </main>
     </div>
   </div>

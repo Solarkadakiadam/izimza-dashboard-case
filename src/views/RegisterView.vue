@@ -1,122 +1,140 @@
 <template>
-  <AuthLayout>
-    <div class="register-form">
-      <h2 class="form-title">Kayıt Ol</h2>
+  <div class="register-form">
+    <h2 class="form-title">Kayıt Ol</h2>
 
-      <form @submit.prevent="handleRegister" class="form">
-        <div class="form-group">
-          <label for="register-name" class="form-label">Ad *</label>
-          <InputText
-            id="register-name"
-            name="name"
-            v-model="form.name"
-            autocomplete="given-name"
-            placeholder="Adınızı girin"
-            :class="{ 'p-invalid': errors.name }"
-            class="form-input"
-          />
-          <small v-if="errors.name" class="form-error">{{ errors.name }}</small>
-        </div>
-
-        <div class="form-group">
-          <label for="register-surname" class="form-label">Soyad *</label>
-          <InputText
-            id="register-surname"
-            name="surname"
-            v-model="form.surname"
-            autocomplete="family-name"
-            placeholder="Soyadınızı girin"
-            :class="{ 'p-invalid': errors.surname }"
-            class="form-input"
-          />
-          <small v-if="errors.surname" class="form-error">{{ errors.surname }}</small>
-        </div>
-
-        <div class="form-group">
-          <label for="register-email" class="form-label">E-Posta *</label>
-          <InputText
-            id="register-email"
-            name="email"
-            v-model="form.email"
-            type="email"
-            autocomplete="email"
-            placeholder="ornek@email.com"
-            :class="{ 'p-invalid': errors.email }"
-            class="form-input"
-          />
-          <small v-if="errors.email" class="form-error">{{ errors.email }}</small>
-        </div>
-
-        <div class="form-group">
-          <label for="register-password" class="form-label">Şifre *</label>
-          <Password
-            input-id="register-password"
-            name="password"
-            v-model="form.password"
-            autocomplete="new-password"
-            placeholder="Şifrenizi girin"
-            :class="{ 'p-invalid': errors.password }"
-            class="form-input"
-            toggleMask
-            :feedback="true"
-          />
-          <small v-if="errors.password" class="form-error">{{ errors.password }}</small>
-        </div>
-
-        <div class="form-group">
-          <label for="register-password-confirm" class="form-label">Şifre Doğrulama *</label>
-          <Password
-            input-id="register-password-confirm"
-            name="passwordConfirm"
-            v-model="form.passwordConfirm"
-            autocomplete="new-password"
-            placeholder="Şifrenizi tekrar girin"
-            :class="{ 'p-invalid': errors.passwordConfirm }"
-            class="form-input"
-            toggleMask
-            :feedback="false"
-          />
-          <small v-if="errors.passwordConfirm" class="form-error">{{
-            errors.passwordConfirm
-          }}</small>
-        </div>
-
-        <div class="form-group form-group--checkbox">
-          <div class="checkbox-container">
-            <Checkbox
-              input-id="register-terms"
-              v-model="form.acceptTerms"
-              binary
-              :class="{ 'p-invalid': errors.acceptTerms }"
+    <Form
+      @submit="handleRegister"
+      :validation-schema="validationSchema"
+      :validate-on-input="false"
+      :validate-on-blur="true"
+    >
+      <div class="form">
+        <Field name="name" v-slot="{ field, errorMessage }">
+          <div class="form-group">
+            <label for="register-name" class="form-label">Ad *</label>
+            <InputText
+              id="register-name"
+              v-bind="field"
+              autocomplete="given-name"
+              placeholder="Adınızı girin"
+              :class="{ 'p-invalid': errorMessage }"
+              class="form-input"
             />
-            <label for="register-terms" class="form-label form-label--checkbox">
-              İzimza Kullanım Şartları'nı kabul ediyorum. Aydınlatma Metni'ni okudum ve anladım. *
-            </label>
+            <small v-if="errorMessage" class="form-error">{{ errorMessage }}</small>
           </div>
-          <small v-if="errors.acceptTerms" class="form-error">{{ errors.acceptTerms }}</small>
-        </div>
+        </Field>
+
+        <Field name="surname" v-slot="{ field, errorMessage }">
+          <div class="form-group">
+            <label for="register-surname" class="form-label">Soyad *</label>
+            <InputText
+              id="register-surname"
+              v-bind="field"
+              autocomplete="family-name"
+              placeholder="Soyadınızı girin"
+              :class="{ 'p-invalid': errorMessage }"
+              class="form-input"
+            />
+            <small v-if="errorMessage" class="form-error">{{ errorMessage }}</small>
+          </div>
+        </Field>
+
+        <Field name="email" v-slot="{ field, errorMessage }">
+          <div class="form-group">
+            <label for="register-email" class="form-label">E-Posta *</label>
+            <InputText
+              id="register-email"
+              v-bind="field"
+              type="email"
+              autocomplete="email"
+              placeholder="ornek@email.com"
+              :class="{ 'p-invalid': errorMessage }"
+              class="form-input"
+            />
+            <small v-if="errorMessage" class="form-error">{{ errorMessage }}</small>
+          </div>
+        </Field>
+
+        <Field name="password" v-slot="{ field, errorMessage }">
+          <div class="form-group">
+            <label for="register-password" class="form-label">Şifre *</label>
+            <Password
+              input-id="register-password"
+              v-bind="field"
+              autocomplete="new-password"
+              placeholder="Şifrenizi girin"
+              :input-class="{ 'p-invalid': errorMessage }"
+              class="form-input"
+              toggleMask
+              :feedback="true"
+            />
+            <small v-if="errorMessage" class="form-error">{{ errorMessage }}</small>
+          </div>
+        </Field>
+
+        <Field name="passwordConfirm" v-slot="{ field, errorMessage }">
+          <div class="form-group">
+            <label for="register-password-confirm" class="form-label">Şifre Doğrulama *</label>
+            <Password
+              input-id="register-password-confirm"
+              v-bind="field"
+              autocomplete="new-password"
+              placeholder="Şifrenizi tekrar girin"
+              :input-class="{ 'p-invalid': errorMessage }"
+              class="form-input"
+              toggleMask
+              :feedback="false"
+            />
+            <small v-if="errorMessage" class="form-error">{{ errorMessage }}</small>
+          </div>
+        </Field>
+
+        <Field
+          name="acceptTerms"
+          v-slot="{ field, errorMessage, handleChange }"
+          type="checkbox"
+          :value="true"
+          :unchecked-value="false"
+        >
+          <div class="form-group form-group--checkbox">
+            <div class="checkbox-container">
+              <Checkbox
+                input-id="register-terms"
+                :model-value="field.value"
+                @update:model-value="handleChange"
+                binary
+                :class="{ 'p-invalid': errorMessage }"
+              />
+              <label for="register-terms" class="form-label form-label--checkbox">
+                İzimza Kullanım Şartları'nı kabul ediyorum. Aydınlatma Metni'ni okudum ve anladım. *
+              </label>
+            </div>
+            <small v-if="errorMessage" class="form-error">{{ errorMessage }}</small>
+          </div>
+        </Field>
 
         <Button
           type="submit"
           label="Kayıt Ol"
           class="form-button form-button--primary"
           :loading="isLoading"
-          :disabled="!isFormValid"
         />
 
         <div class="form-links">
-          <router-link to="/login" class="form-link form-link--back">
+          <router-link :to="{ name: 'Login' }" class="form-link form-link--back">
             ← Giriş'e geri dön
           </router-link>
         </div>
-      </form>
-    </div>
-  </AuthLayout>
+      </div>
+    </Form>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { Form, Field } from 'vee-validate'
+import * as yup from 'yup'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Checkbox from 'primevue/checkbox'
@@ -124,88 +142,36 @@ import Button from 'primevue/button'
 import { useToast } from 'primevue/usetoast'
 import { useAuthStore } from '@/stores/auth'
 import type { RegisterData } from '@/types/auth'
-import AuthLayout from '@/layouts/AuthLayout.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const toast = useToast()
-
-const form = ref<RegisterData>({
-  name: '',
-  surname: '',
-  email: '',
-  password: '',
-  passwordConfirm: '',
-  acceptTerms: false,
-})
-
-const errors = ref<Record<string, string>>({})
 const isLoading = ref(false)
 
-// Clear errors when form changes
-watch(
-  form,
-  () => {
-    errors.value = {}
-  },
-  { deep: true },
-)
-
-const isFormValid = computed(() => {
-  return (
-    form.value.name &&
-    form.value.surname &&
-    form.value.email &&
-    form.value.password &&
-    form.value.passwordConfirm &&
-    form.value.acceptTerms &&
-    !Object.keys(errors.value).length
-  )
+// Validation schema with Yup
+const validationSchema = yup.object({
+  name: yup.string().required('Ad gereklidir'),
+  surname: yup.string().required('Soyad gereklidir'),
+  email: yup
+    .string()
+    .required('E-posta adresi gereklidir')
+    .email('Geçerli bir e-posta adresi girin'),
+  password: yup.string().required('Şifre gereklidir').min(6, 'Şifre en az 6 karakter olmalıdır'),
+  passwordConfirm: yup
+    .string()
+    .required('Şifre doğrulama gereklidir')
+    .oneOf([yup.ref('password')], 'Şifreler eşleşmiyor'),
+  acceptTerms: yup
+    .boolean()
+    .required('Kullanım şartlarını kabul etmelisiniz')
+    .oneOf([true], 'Kullanım şartlarını kabul etmelisiniz'),
 })
 
-const validateForm = (): boolean => {
-  errors.value = {}
-
-  if (!form.value.name) {
-    errors.value.name = 'Ad gereklidir'
-  }
-
-  if (!form.value.surname) {
-    errors.value.surname = 'Soyad gereklidir'
-  }
-
-  if (!form.value.email) {
-    errors.value.email = 'E-posta adresi gereklidir'
-  } else if (!/\S+@\S+\.\S+/.test(form.value.email)) {
-    errors.value.email = 'Geçerli bir e-posta adresi girin'
-  }
-
-  if (!form.value.password) {
-    errors.value.password = 'Şifre gereklidir'
-  } else if (form.value.password.length < 6) {
-    errors.value.password = 'Şifre en az 6 karakter olmalıdır'
-  }
-
-  if (!form.value.passwordConfirm) {
-    errors.value.passwordConfirm = 'Şifre doğrulama gereklidir'
-  } else if (form.value.password !== form.value.passwordConfirm) {
-    errors.value.passwordConfirm = 'Şifreler eşleşmiyor'
-  }
-
-  if (!form.value.acceptTerms) {
-    errors.value.acceptTerms = 'Kullanım şartlarını kabul etmelisiniz'
-  }
-
-  return Object.keys(errors.value).length === 0
-}
-
-const handleRegister = async () => {
-  if (!validateForm()) return
-
+const handleRegister = async (values: Record<string, unknown>) => {
   isLoading.value = true
 
   try {
-    const success = await authStore.register(form.value)
+    const success = await authStore.register(values as unknown as RegisterData)
 
     if (success) {
       toast.add({
@@ -254,7 +220,7 @@ const handleRegister = async () => {
 .form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .form-group {
@@ -276,7 +242,7 @@ const handleRegister = async () => {
 
 .checkbox-container {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.5rem;
   width: 100%;
 }

@@ -1,55 +1,74 @@
 <template>
-  <AuthLayout>
-    <div class="login-form">
-      <h2 class="form-title">Giriş Yap</h2>
+  <div class="login-form">
+    <h2 class="form-title">Giriş Yap</h2>
 
-      <form @submit.prevent="handleLogin" class="form">
-        <div class="form-group">
-          <label for="login-email" class="form-label">E-Posta</label>
-          <InputText
-            id="login-email"
-            name="email"
-            v-model="form.email"
-            type="email"
-            autocomplete="email"
-            placeholder="ornek@email.com"
-            :class="{ 'p-invalid': errors.email }"
-            class="form-input"
-          />
-          <small v-if="errors.email" class="form-error">{{ errors.email }}</small>
-        </div>
-
-        <div class="form-group">
-          <label for="login-password" class="form-label">Şifre</label>
-          <Password
-            input-id="login-password"
-            name="password"
-            v-model="form.password"
-            autocomplete="current-password"
-            placeholder="Şifrenizi girin"
-            :class="{ 'p-invalid': errors.password }"
-            class="form-input"
-            toggleMask
-            :feedback="false"
-          />
-          <small v-if="errors.password" class="form-error">{{ errors.password }}</small>
-        </div>
-
-        <div class="form-group form-group--checkbox">
-          <div class="checkbox-container">
-            <Checkbox input-id="login-remember" v-model="form.rememberMe" binary />
-            <label for="login-remember" class="form-label form-label--checkbox">
-              Beni Hatırla
-            </label>
+    <Form
+      @submit="handleLogin"
+      :validation-schema="validationSchema"
+      :validate-on-input="false"
+      :validate-on-blur="true"
+    >
+      <div class="form">
+        <Field name="email" v-slot="{ field, errorMessage }">
+          <div class="form-group">
+            <label for="login-email" class="form-label">E-Posta</label>
+            <InputText
+              id="login-email"
+              v-bind="field"
+              type="email"
+              autocomplete="email"
+              placeholder="ornek@email.com"
+              :class="{ 'p-invalid': errorMessage }"
+              class="form-input"
+            />
+            <small v-if="errorMessage" class="form-error">{{ errorMessage }}</small>
           </div>
-        </div>
+        </Field>
+
+        <Field name="password" v-slot="{ field, errorMessage }">
+          <div class="form-group">
+            <label for="login-password" class="form-label">Şifre</label>
+            <Password
+              input-id="login-password"
+              v-bind="field"
+              autocomplete="current-password"
+              placeholder="Şifrenizi girin"
+              :input-class="{ 'p-invalid': errorMessage }"
+              class="form-input"
+              toggleMask
+              :feedback="false"
+            />
+            <small v-if="errorMessage" class="form-error">{{ errorMessage }}</small>
+          </div>
+        </Field>
+
+        <Field
+          name="rememberMe"
+          v-slot="{ field, handleChange }"
+          type="checkbox"
+          :value="true"
+          :unchecked-value="false"
+        >
+          <div class="form-group form-group--checkbox">
+            <div class="checkbox-container">
+              <Checkbox
+                input-id="login-remember"
+                :model-value="field.value"
+                @update:model-value="handleChange"
+                binary
+              />
+              <label for="login-remember" class="form-label form-label--checkbox">
+                Beni Hatırla
+              </label>
+            </div>
+          </div>
+        </Field>
 
         <Button
           type="submit"
           label="Oturum Aç"
           class="form-button form-button--primary"
           :loading="isLoading"
-          :disabled="!isFormValid"
         />
 
         <div class="form-divider">
@@ -74,24 +93,26 @@
         </div>
 
         <div class="form-links">
-          <router-link to="/register" class="form-link"> Kayıt Ol </router-link>
+          <router-link :to="{ name: 'Register' }" class="form-link"> Kayıt Ol </router-link>
           <a href="#" class="form-link" @click.prevent="handleForgotPassword"> Şifre Sıfırla </a>
         </div>
-      </form>
-
-      <!-- Demo Users Info -->
-      <div class="demo-users">
-        <h4 class="demo-title">Demo Kullanıcılar:</h4>
-        <div class="demo-user"><strong>omer@izimza.com</strong> / <code>123456</code></div>
-        <div class="demo-user"><strong>test@izimza.com</strong> / <code>test123</code></div>
       </div>
+    </Form>
+
+    <!-- Demo Users Info -->
+    <div class="demo-users">
+      <h4 class="demo-title">Demo Kullanıcılar:</h4>
+      <div class="demo-user"><strong>omer@izimza.com</strong> / <code>123456</code></div>
+      <div class="demo-user"><strong>test@izimza.com</strong> / <code>test123</code></div>
     </div>
-  </AuthLayout>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { Form, Field } from 'vee-validate'
+import * as yup from 'yup'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Checkbox from 'primevue/checkbox'
@@ -99,50 +120,27 @@ import Button from 'primevue/button'
 import { useToast } from 'primevue/usetoast'
 import { useAuthStore } from '@/stores/auth'
 import type { LoginCredentials } from '@/types/auth'
-import AuthLayout from '@/layouts/AuthLayout.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const toast = useToast()
-
-const form = ref<LoginCredentials>({
-  email: '',
-  password: '',
-  rememberMe: false,
-})
-
-const errors = ref<Record<string, string>>({})
 const isLoading = ref(false)
 
-const isFormValid = computed(() => {
-  return form.value.email && form.value.password && !Object.keys(errors.value).length
+// Validation schema with Yup
+const validationSchema = yup.object({
+  email: yup
+    .string()
+    .required('E-posta adresi gereklidir')
+    .email('Geçerli bir e-posta adresi girin'),
+  password: yup.string().required('Şifre gereklidir').min(6, 'Şifre en az 6 karakter olmalıdır'),
+  rememberMe: yup.boolean(),
 })
 
-const validateForm = (): boolean => {
-  errors.value = {}
-
-  if (!form.value.email) {
-    errors.value.email = 'E-posta adresi gereklidir'
-  } else if (!/\S+@\S+\.\S+/.test(form.value.email)) {
-    errors.value.email = 'Geçerli bir e-posta adresi girin'
-  }
-
-  if (!form.value.password) {
-    errors.value.password = 'Şifre gereklidir'
-  } else if (form.value.password.length < 6) {
-    errors.value.password = 'Şifre en az 6 karakter olmalıdır'
-  }
-
-  return Object.keys(errors.value).length === 0
-}
-
-const handleLogin = async () => {
-  if (!validateForm()) return
-
+const handleLogin = async (values: Record<string, unknown>) => {
   isLoading.value = true
 
   try {
-    const success = await authStore.login(form.value)
+    const success = await authStore.login(values as unknown as LoginCredentials)
 
     if (success) {
       toast.add({
@@ -195,7 +193,7 @@ const handleForgotPassword = () => {
 .form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .form-group {

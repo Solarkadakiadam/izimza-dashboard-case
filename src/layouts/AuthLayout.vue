@@ -16,14 +16,9 @@
 
         <div class="auth-layout__illustration">
           <div class="illustration">
-            <div class="illustration__beach">
-              <div class="beach__umbrella"></div>
-              <div class="beach__person">
-                <div class="person__tablet"></div>
-              </div>
-              <div class="beach__palm-1"></div>
-              <div class="beach__palm-2"></div>
-            </div>
+            <div class="gradient-shape gradient-shape-1"></div>
+            <div class="gradient-shape gradient-shape-2"></div>
+            <div class="gradient-shape gradient-shape-3"></div>
           </div>
         </div>
       </div>
@@ -31,7 +26,7 @@
 
     <div class="auth-layout__right">
       <div class="auth-layout__form-container">
-        <slot />
+        <router-view />
       </div>
     </div>
 
@@ -135,79 +130,84 @@ const toggleLanguage = () => {
   width: 100%;
   height: 300px;
   position: relative;
-  background: linear-gradient(to bottom, #87ceeb 0%, #98fb98 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
   border-radius: 20px;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.illustration__beach {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.beach__umbrella {
+.gradient-shape {
   position: absolute;
-  top: 20px;
-  right: 30px;
-  width: 0;
-  height: 0;
-  border-left: 30px solid transparent;
-  border-right: 30px solid transparent;
-  border-bottom: 80px solid #ff6b35;
+  border-radius: 50%;
+  opacity: 0.6;
 }
 
-.beach__person {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40px;
-  height: 60px;
-  background: #8b4513;
-  border-radius: 20px 20px 0 0;
+.gradient-shape-1 {
+  width: 200px;
+  height: 200px;
+  background: linear-gradient(135deg, #ff6b35 0%, #f9ca24 100%);
+  top: -50px;
+  left: -50px;
+  animation: float1 25s ease-in-out infinite;
 }
 
-.person__tablet {
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 25px;
-  height: 35px;
-  background: #333;
-  border-radius: 3px;
+.gradient-shape-2 {
+  width: 150px;
+  height: 150px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  bottom: -30px;
+  right: 20%;
+  animation: float2 30s ease-in-out infinite;
 }
 
-.beach__palm-1,
-.beach__palm-2 {
-  position: absolute;
-  bottom: 0;
-  width: 4px;
-  height: 80px;
-  background: #8b4513;
+.gradient-shape-3 {
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  top: 50%;
+  right: -20px;
+  animation: float3 20s ease-in-out infinite;
 }
 
-.beach__palm-1 {
-  left: 20px;
+@keyframes float1 {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  33% {
+    transform: translate(-60px, -70px);
+  }
+  66% {
+    transform: translate(50px, -60px);
+  }
 }
 
-.beach__palm-2 {
-  right: 20px;
+@keyframes float2 {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  33% {
+    transform: translate(55px, 65px);
+  }
+  66% {
+    transform: translate(-45px, 50px);
+  }
 }
 
-.beach__palm-1::before,
-.beach__palm-2::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-bottom: 30px solid #228b22;
+@keyframes float3 {
+  0%,
+  100% {
+    transform: translate(0, -50%);
+  }
+  33% {
+    transform: translate(-70px, calc(-50% + 60px));
+  }
+  66% {
+    transform: translate(40px, calc(-50% - 55px));
+  }
 }
 
 .auth-layout__right {
