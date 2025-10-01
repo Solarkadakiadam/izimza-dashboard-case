@@ -148,7 +148,6 @@ const authStore = useAuthStore()
 const toast = useToast()
 const isLoading = ref(false)
 
-// Validation schema with Yup
 const validationSchema = yup.object({
   name: yup.string().required('Ad gereklidir'),
   surname: yup.string().required('Soyad gereklidir'),

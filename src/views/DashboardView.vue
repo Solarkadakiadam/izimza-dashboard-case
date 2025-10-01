@@ -227,18 +227,16 @@ const recentDocuments = ref<Document[]>([
   },
 ])
 
-const handleFileUpload = (event: { files: File | File[] }) => {
-  const files = Array.isArray(event.files) ? event.files : [event.files]
-  console.log('Files uploaded:', files)
+const handleFileUpload = (_event: { files: File | File[] }) => {
+  console.log(_event)
 }
 
-const handleFileSelect = (event: { files: File | File[] }) => {
-  const files = Array.isArray(event.files) ? event.files : [event.files]
-  console.log('Files selected:', files)
+const handleFileSelect = (_event: { files: File | File[] }) => {
+  console.log(_event)
 }
 
 const viewAllDocuments = () => {
-  console.log('View all documents clicked')
+  console.log('View all documents')
 }
 
 const getFileIcon = (type: string) => {
@@ -261,12 +259,12 @@ const formatDate = (date: Date) => {
   }).format(date)
 }
 
-const viewDocument = (document: Document) => {
-  console.log('View document:', document)
+const viewDocument = (_document: Document) => {
+  console.log(_document)
 }
 
-const downloadDocument = (document: Document) => {
-  console.log('Download document:', document)
+const downloadDocument = (_document: Document) => {
+  console.log(_document)
 }
 
 const getBadgeSeverity = (type: string) => {

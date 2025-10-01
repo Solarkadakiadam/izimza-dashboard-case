@@ -99,7 +99,6 @@
       </div>
     </Form>
 
-    <!-- Demo Users Info -->
     <div class="demo-users">
       <h4 class="demo-title">Demo Kullanıcılar:</h4>
       <div class="demo-user"><strong>omer@izimza.com</strong> / <code>123456</code></div>
@@ -126,7 +125,6 @@ const authStore = useAuthStore()
 const toast = useToast()
 const isLoading = ref(false)
 
-// Validation schema with Yup
 const validationSchema = yup.object({
   email: yup
     .string()
@@ -173,7 +171,12 @@ const handleLogin = async (values: Record<string, unknown>) => {
 }
 
 const handleForgotPassword = () => {
-  console.log('Forgot password clicked')
+  toast.add({
+    severity: 'info',
+    summary: 'Bilgi',
+    detail: 'Şifre sıfırlama özelliği yakında eklenecek',
+    life: 3000,
+  })
 }
 </script>
 

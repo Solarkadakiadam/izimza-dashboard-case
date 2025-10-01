@@ -139,16 +139,12 @@ const userMenuItems = ref([
   {
     label: 'Profil',
     icon: 'pi pi-user',
-    command: () => {
-      console.log('Profile clicked')
-    },
+    command: () => {},
   },
   {
     label: 'Ayarlar',
     icon: 'pi pi-cog',
-    command: () => {
-      console.log('Settings clicked')
-    },
+    command: () => {},
   },
   {
     separator: true,

@@ -46,9 +46,7 @@
 <script setup lang="ts">
 import Button from 'primevue/button'
 
-const toggleLanguage = () => {
-  console.log('Language toggle clicked')
-}
+const toggleLanguage = () => {}
 </script>
 
 <style scoped>
